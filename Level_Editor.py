@@ -2,7 +2,6 @@ import pygame
 import pickle
 from os import path
 
-
 pygame.init()
 
 clock = pygame.time.Clock()
@@ -17,7 +16,6 @@ screen_height = (tile_size * cols) + margin
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Level Editor')
-
 
 #load images
 sun_img = pygame.image.load('sun.png')

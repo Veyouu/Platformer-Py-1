@@ -19,10 +19,8 @@ pygame.display.set_caption('Platformer')
 
 #define font
 font = pygame.font.SysFont('Bauhaus 93', 70)
+font_pause = pygame.font.SysFont('Auriel', 20)
 font_score = pygame.font.SysFont('Bauhaus 93', 30)
-
-
-
 
 tile_size = 30
 game_over = 0
@@ -54,15 +52,9 @@ jump_fx.set_volume(0.5)
 game_over_fx = pygame.mixer.Sound('game_over.wav')
 game_over_fx.set_volume(0.5)
 
-
-
-
-
 def draw_text(text, font, text_col, x, y):
 	img = font.render(text, True, text_col)
 	screen.blit(img, (x, y))
-
-
 
 #reset function to reset level
 def reset_level(Level):
@@ -86,19 +78,18 @@ class Button():
         self.rect.x = x
         self.rect.y = y
         self.clicked = False
+
     def draw(self):
         action  = False
 
         #get coordinates of mouse
         pos = pygame.mouse.get_pos()
 
-
         #check mouseover and clicked conditions
         if self.rect.collidepoint(pos):
                 if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
                     action = True
                     self.clicked = True
-        
         
         if pygame.mouse.get_pressed()[0] == 0:
             self.clicked = False
@@ -107,9 +98,6 @@ class Button():
         screen.blit(self.image, self.rect)
 
         return action
-
-
-
 
 class Player():
     def __init__(self, x, y):
@@ -221,7 +209,6 @@ class Player():
             self.rect.x += dx
             self.rect.y += dy
 
-    
         elif game_over == -1:
             self.image = self.dead_image
             draw_text('GAME OVER!', font, blue, (screen_width // 2) - 200, screen_height // 2)
@@ -255,8 +242,6 @@ class Player():
         self.jumped = False
         self.direction = 0
         self.in_air = True
-
-
 
 class World():
     def __init__(self, data):
@@ -310,8 +295,6 @@ class World():
             screen.blit(tile[0], tile[1])
             #pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
             
-
-
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -330,7 +313,6 @@ class Enemy(pygame.sprite.Sprite):
         if abs(self.move_counter) > 50:
             self.move_direction *= -1
             self.move_counter *= -1
-
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, move_x, move_y):
@@ -361,7 +343,6 @@ class Lava(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-
 class Coin(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -369,7 +350,6 @@ class Coin(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(img, (tile_size // 2, tile_size // 2))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-
 
 class Exit(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -380,14 +360,12 @@ class Exit(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         
-
 player = Player(100, screen_height - 130)
 blob_group = pygame.sprite.Group()
 platform_group = pygame.sprite.Group()
 lava_group = pygame.sprite.Group()
 coin_group = pygame.sprite.Group()
 exit_group = pygame.sprite.Group()
-
 
 #create dummy coin for showing the score
 score_coin = Coin(tile_size // 2, tile_size // 2)
@@ -403,6 +381,7 @@ world = World(world_data)
 restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img)
 start_button = Button(screen_width // 2 - start_img.get_width() - 20, screen_height // 2, start_img)
 exit_button = Button(screen_width // 2 + 20, screen_height // 2, exit_btn)
+exit_button_paused = Button(225, screen_height // 2, exit_btn)
 
 pause = False
 run = True
@@ -411,10 +390,10 @@ while run:
 
     #IF PAUSED.
     if pause:
-        #SHOW MENU
-        
-
-        pass
+        # draw_text('press esc to continue..', font_pause, 'white', 230, 380)
+        draw_text('PAUSED', font, 'black', 180, 200)
+        if exit_button_paused.draw():
+            run = False
     else:
         screen.blit(bg_img, (0, 0))
         screen.blit(sun_img, (100, 100))
