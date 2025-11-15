@@ -192,7 +192,6 @@ class Player():
                 game_over_fx.play()
 
 
-
         #check collision with exit
             if pygame.sprite.spritecollide(self, exit_group, False):
                 game_over = 1
@@ -372,7 +371,6 @@ class Coin(pygame.sprite.Sprite):
         self.rect.center = (x, y)
 
 
-
 class Exit(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -382,8 +380,6 @@ class Exit(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         
-
-
 
 player = Player(100, screen_height - 130)
 blob_group = pygame.sprite.Group()
@@ -402,79 +398,91 @@ if path.exists(f'level{level}_data'):
     pickle_In  = open(f'level{level}_data', 'rb')
     world_data = pickle.load(pickle_In)
 
-
 world = World(world_data)
 #create buttons
 restart_button = Button(screen_width // 2 - 50, screen_height // 2 + 100, restart_img)
 start_button = Button(screen_width // 2 - start_img.get_width() - 20, screen_height // 2, start_img)
 exit_button = Button(screen_width // 2 + 20, screen_height // 2, exit_btn)
 
+pause = False
 run = True
 while run:
     clock.tick(fps)
 
-    screen.blit(bg_img, (0, 0))
-    screen.blit(sun_img, (100, 100))
+    #IF PAUSED.
+    if pause:
+        #SHOW MENU
+        
 
-    if main_menu == True:
-        if exit_button.draw():
-            run = False
-        if start_button.draw():
-            main_menu = False
-
+        pass
     else:
-        world.draw()
+        screen.blit(bg_img, (0, 0))
+        screen.blit(sun_img, (100, 100))
 
-        if game_over == 0:
-            blob_group.update()
-            platform_group.update()
-			#update score
-			#check if a coin has been collected
-            if pygame.sprite.spritecollide(player, coin_group, True):
-                score += 1
-                coin_fx.play()
-            draw_text('X ' + str(score), font_score, white, tile_size - 10, 10)
-		
-        
-        blob_group.draw(screen)
-        platform_group.draw(screen)
-        lava_group.draw(screen)
-        coin_group.draw(screen)
-        exit_group.draw(screen)
-        
-        game_over = player.update(game_over)
-        
+        if main_menu == True:
+            if exit_button.draw():
+                run = False
+            if start_button.draw():
+                main_menu = False
 
-        #if player has died
-        if game_over == -1:
-            if restart_button.draw():
-                world_data == []
-                world = reset_level(level)
-                game_over = 0
+        else:
+            world.draw()
 
-        #if player has completed level
-        if game_over == 1:
-            #reset game/ go to next level
-            level += 1
-            if level <= max_levels: 
-                #reset level
-                world_data == []
-                world = reset_level(level)
-                game_over = 0
-            else:
-                draw_text('YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2)
+            if game_over == 0:
+                blob_group.update()
+                platform_group.update()
+                #update score
+                #check if a coin has been collected
+                if pygame.sprite.spritecollide(player, coin_group, True):
+                    score += 1
+                    coin_fx.play()
+                draw_text('X ' + str(score), font_score, white, tile_size - 10, 10)
+            
+            blob_group.draw(screen)
+            platform_group.draw(screen)
+            lava_group.draw(screen)
+            coin_group.draw(screen)
+            exit_group.draw(screen)
+            
+            game_over = player.update(game_over)
+            
+            #if player has died
+            if game_over == -1:
                 if restart_button.draw():
-                    level = 1
-					#reset level
-                    world_data = []
+                    world_data == []
                     world = reset_level(level)
                     game_over = 0
-                    score = 0
 
+            #if player has completed level
+            if game_over == 1:
+                #reset game/ go to next level
+                level += 1
+                if level <= max_levels: 
+                    #reset level
+                    world_data == []
+                    world = reset_level(level)
+                    game_over = 0
+                else:
+                    draw_text('YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2)
+                    if restart_button.draw():
+                        level = 1
+                        #reset level
+                        world_data = []
+                        world = reset_level(level)
+                        game_over = 0
+                        score = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE and main_menu == False and game_over == 0:
+                #PRESS ESCAPE TO PAUSE
+                if pause:
+                    pause = False
+                else:
+                    pause = True
+                print(pause)
 
     pygame.display.update()
 
