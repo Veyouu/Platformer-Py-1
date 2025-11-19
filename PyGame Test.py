@@ -390,7 +390,6 @@ while run:
 
     #IF PAUSED.
     if pause:
-        # draw_text('press esc to continue..', font_pause, 'white', 230, 380)
         draw_text('PAUSED', font, 'black', 180, 200)
         if exit_button_paused.draw():
             run = False
@@ -406,6 +405,7 @@ while run:
 
         else:
             world.draw()
+            draw_text('press esc to exit', font_pause, 'black', 150, 580)
 
             if game_over == 0:
                 blob_group.update()
