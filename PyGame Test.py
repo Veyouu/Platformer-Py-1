@@ -15,7 +15,7 @@ screen_width = 600
 screen_height = 600
 
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('Platformer')
+pygame.display.set_caption('Hungry Cat')
 
 #define font
 font = pygame.font.SysFont('Bauhaus 93', 70)
@@ -227,7 +227,7 @@ class Player():
         self.counter = 0
         for num in range(1, 5):
             img_right = pygame.image.load(f'guy{num}.png')
-            img_right = pygame.transform.scale(img_right, (25, 45))
+            img_right = pygame.transform.scale(img_right, (30, 30))
             img_left = pygame.transform.flip(img_right, True, False)
             self.images_right.append(img_right)
             self.images_left.append(img_left)
@@ -299,7 +299,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         img = pygame.image.load('blob.png').convert_alpha()
-        img = pygame.transform.scale(img, (35, 25))  # Resize the blob here
+        img = pygame.transform.scale(img, (35, 35))  # Resize the blob here
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -440,7 +440,7 @@ while run:
                     #reset level
                     world_data == []
                     world = reset_level(level)
-                    game_over = 0
+                    game_over = 0   
                 else:
                     draw_text('YOU WIN!', font, blue, (screen_width // 2) - 140, screen_height // 2)
                     if restart_button.draw():
