@@ -103,13 +103,11 @@ class Player():
     def __init__(self, x, y):
         self.reset(x, y)
 
-
-
     def update(self, game_over):
         dx = 0
         dy = 0
         walk_cooldown = 5
-        col_thresh = 20
+        col_thresh = 25
 
         if game_over == 0:
             key = pygame.key.get_pressed()
@@ -151,7 +149,7 @@ class Player():
                 self.vel_y = 10
             dy += self.vel_y
 
-        #check for collision
+            #check for collision
             self.in_air = True
             for tile in world.tile_list:
                 #check for collision in x direction
@@ -168,31 +166,30 @@ class Player():
                         self.vel_y = 0
                         self.in_air = False
 
-        #check collision with enemies
+            #check collision with enemies
             if pygame.sprite.spritecollide(self, blob_group, False):
                 game_over = -1
+                self.vel_y = -15  # upward bounce on death
                 game_over_fx.play()
 
-        
-        #check collision with lava
+            #check collision with lava
             if pygame.sprite.spritecollide(self, lava_group, False):
                 game_over = -1
+                self.vel_y = -15  # upward bounce on death
                 game_over_fx.play()
 
-
-        #check collision with exit
+            #check collision with exit
             if pygame.sprite.spritecollide(self, exit_group, False):
                 game_over = 1
-        
 
-        #check for collision with platforms
+            #check for collision with platforms
             for platform in platform_group:
                 #collision in the x direction
                 if platform.rect.colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
                     dx = 0
                 #collision in the y direction
                 if platform.rect.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
-                #check if below platform
+                    #check if below platform
                     if abs((self.rect.top + dy) - platform.rect.bottom) < col_thresh:
                         self.vel_y = 0
                         dy = platform.rect.bottom - self.rect.top
@@ -205,15 +202,20 @@ class Player():
                     if platform.move_x != 0:
                         self.rect.x += platform.move_direction
 
-        #update player coordination
+            #update player coordination
             self.rect.x += dx
             self.rect.y += dy
 
         elif game_over == -1:
+            # Apply gravity for death animation
+            self.vel_y += 1
+            if self.vel_y > 10:
+                self.vel_y = 10
+            self.rect.y += self.vel_y
             self.image = self.dead_image
+            self.image = pygame.transform.flip(self.image, False, True)
             draw_text('GAME OVER!', font, blue, (screen_width // 2) - 200, screen_height // 2)
-            if self.rect.y > 200:
-                self.rect.y -= 5
+        
         #draw player onto screen  
         screen.blit(self.image, self.rect) #draw player
         #pygame.draw.rect(screen, (255, 255, 255), self.rect, 2)
@@ -231,7 +233,8 @@ class Player():
             img_left = pygame.transform.flip(img_right, True, False)
             self.images_right.append(img_right)
             self.images_left.append(img_left)
-        self.dead_image = pygame.image.load('ghost.png')
+        self.dead_image = pygame.image.load('death.png')
+        self.dead_image = pygame.transform.scale(self.dead_image, (30, 30))
         self.image = self.images_right[self.index]
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -318,10 +321,11 @@ class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, move_x, move_y):
         pygame.sprite.Sprite.__init__(self)
         img = pygame.image.load('platform.png')
-        self.image = pygame.transform.scale(img, (tile_size, tile_size // 2))
+        self.image = pygame.transform.scale(img, (tile_size, tile_size))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.rect.height = tile_size  # Make it 30 tall instead of 15 (for better collision)
         self.move_counter = 0
         self.move_direction = 1
         self.move_x = move_x
@@ -383,6 +387,13 @@ start_button = Button(screen_width // 2 - start_img.get_width() - 20, screen_hei
 exit_button = Button(screen_width // 2 + 20, screen_height // 2, exit_btn)
 exit_button_paused = Button(225, screen_height // 2, exit_btn)
 
+#Pause button
+pause_img = font_pause.render('PAUSE', True, 'black')
+pause_button = Button(10, 10, pause_img)
+
+
+
+
 pause = False
 run = True
 while run:
@@ -405,7 +416,7 @@ while run:
 
         else:
             world.draw()
-            draw_text('press esc to exit', font_pause, 'black', 150, 580)
+            
 
             if game_over == 0:
                 blob_group.update()

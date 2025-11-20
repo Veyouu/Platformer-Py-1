@@ -88,12 +88,12 @@ def draw_world():
 					screen.blit(img, (col * tile_size, row * tile_size + (tile_size * 0.25)))
 				if world_data[row][col] == 4:
 					#horizontally moving platform
-					img = pygame.transform.scale(platform_x_img, (tile_size, tile_size // 2))
-					screen.blit(img, (col * tile_size, row * tile_size))
+					img = pygame.transform.scale(platform_x_img, (tile_size, tile_size))  # Changed to 50x50 for taller look
+					screen.blit(img, (col * tile_size, row * tile_size))  # Centered in tile
 				if world_data[row][col] == 5:
 					#vertically moving platform
-					img = pygame.transform.scale(platform_y_img, (tile_size, tile_size // 2))
-					screen.blit(img, (col * tile_size, row * tile_size))
+					img = pygame.transform.scale(platform_y_img, (tile_size, tile_size))  # Changed to 50x50 for taller look
+					screen.blit(img, (col * tile_size, row * tile_size))  # Centered in tile
 				if world_data[row][col] == 6:
 					#lava
 					img = pygame.transform.scale(lava_img, (tile_size, tile_size // 2))
