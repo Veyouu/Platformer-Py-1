@@ -229,7 +229,7 @@ class Player():
         self.counter = 0
         for num in range(1, 5):
             img_right = pygame.image.load(f'guy{num}.png')
-            img_right = pygame.transform.scale(img_right, (40, 40))
+            img_right = pygame.transform.scale(img_right, (30, 30))
             img_left = pygame.transform.flip(img_right, True, False)
             self.images_right.append(img_right)
             self.images_left.append(img_left)
@@ -416,8 +416,8 @@ while run:
 
         else:
             world.draw()
+            draw_text('press esc to pause', font_pause, 'black', 180, 580)
             
-
             if game_over == 0:
                 blob_group.update()
                 platform_group.update()
